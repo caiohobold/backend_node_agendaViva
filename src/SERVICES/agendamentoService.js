@@ -1,8 +1,28 @@
 const AgendamentoRepository = require('../REPOSITORIES/agendamentoRepository');
+const AlunoRepository = require('../REPOSITORIES/alunoRepository');
+const FuncionarioRepository = require('../REPOSITORIES/funcionarioRepository');
 
 class AgendamentoService {
   // Criar um novo agendamento
   async create(agendamentoData) {
+
+    const { id_aluno, id_funcionario } = agendamentoData;
+
+    const alunoExiste = await AlunoRepository.findById(id_aluno);
+    if (!alunoExiste) {
+      throw new Error('Aluno não encontrado');
+    }
+
+    const funcionarioExiste = await FuncionarioRepository.findById(id_funcionario);
+    if (!funcionarioExiste) {
+      throw new Error('Funcionário não encontrado');
+    }
+
+    const conflito = await AgendamentoRepository.verificarConflito(agendamentoData);
+    if (conflito) {
+      throw new Error('O funcionário já possui um agendamento nesse horário');
+    }
+    
     return await AgendamentoRepository.create(agendamentoData);
   }
 

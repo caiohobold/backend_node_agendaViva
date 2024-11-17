@@ -6,6 +6,12 @@ class AgendamentoController {
       const agendamento = await AgendamentoService.create(req.body);
       res.status(201).json(agendamento);
     } catch (error) {
+      if (error.message === 'Aluno não encontrado' || error.message === 'Funcionário não encontrado') {
+        return res.status(404).json({ error: error.message });
+      }
+      if (error.message === 'O funcionário já possui um agendamento nesse horário') {
+        return res.status(400).json({ error: error.message });
+      }
       res.status(500).json({ error: 'Erro ao criar agendamento' });
     }
   }

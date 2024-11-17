@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const Agendamento = require('../MODELS/agendamento');
 
 class AgendamentoRepository {
@@ -28,6 +29,22 @@ class AgendamentoRepository {
       await agendamento.destroy();
     }
     return agendamento;
+  }
+
+  async verificarConflito({ data, hora_inicio, hora_fim, id_funcionario }) {
+    const conflito = await Agendamento.findOne({
+      where: {
+        id_funcionario,
+        data,
+        [Op.or]: [
+          {
+            hora_inicio: { [Op.lt]: hora_fim },
+            hora_fim: { [Op.gt]: hora_inicio },
+          },
+        ],
+      },
+    });
+    return conflito;
   }
 }
 
