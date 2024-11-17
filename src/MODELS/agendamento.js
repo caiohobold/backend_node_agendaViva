@@ -18,10 +18,6 @@ const Agendamento = sequelize.define('Agendamento', {
     type: DataTypes.DATE,
     allowNull: false,
   },
-  tipo_agendamento: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
 });
 
 Agendamento.belongsTo(Aluno, { foreignKey: 'id_aluno' });
