@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const sequelize = require('./config/database');
 
 const Aluno = require('./MODELS/aluno');
@@ -15,19 +16,26 @@ const usuarioRoutes = require('./ROUTES/usuariosRoutes');
 
 
 const app = express();
+
+app.use(cors());
+
+app.use(cors({
+  origin: 'http://localhost:3000',  // Substitua pela URL do seu frontend
+}));
+
 app.use(express.json());
 
 app.use('/alunos', alunoRoutes);
 app.use('/agendamentos', agendamentoRoutes);
 app.use('/especialidades', especialidadeRoutes);
-app.use('/funcionariosRoutes', funcionarioRoutes);
-app.use('/usuario', usuarioRoutes);
+app.use('/funcionarios', funcionarioRoutes);
+app.use('/usuarios', usuarioRoutes);
 
 sequelize.sync({ force: false })
   .then(() => {
     console.log('Banco de dados sincronizado');
-    app.listen(process.env.PORT || 3000, () => {
-      console.log(`Servidor rodando na porta ${process.env.PORT || 3000}`);
+    app.listen(process.env.PORT || 3001, () => {
+      console.log(`Servidor rodando na porta ${process.env.PORT || 3001}`);
     });
   })
   .catch((error) => {
