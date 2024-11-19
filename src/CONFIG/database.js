@@ -6,6 +6,11 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   host: process.env.DB_HOST,
   port: process.env.DB_PORT, // Verifique se a porta está sendo passada
   dialect: 'postgres',
+  timezone: '-03:00',
+  dialectOptions: {
+    useUTC: false,
+  },
+  logging: false,
 });
 
 // Testando a conexão

@@ -12,7 +12,7 @@ class AgendamentoController {
       if (error.message === 'O funcionário já possui um agendamento nesse horário') {
         return res.status(400).json({ error: error.message });
       }
-      res.status(500).json({ error: 'Erro ao criar agendamento' });
+      res.status(500).json({ error: 'Erro ao criar agendamento', message: error.message, stack: error.stack });
     }
   }
 
