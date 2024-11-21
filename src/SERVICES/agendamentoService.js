@@ -42,12 +42,33 @@ class AgendamentoService {
 
   // Atualizar um agendamento por ID
   async update(id, agendamentoData) {
-    const agendamento = await AgendamentoRepository.update(id, agendamentoData);
+    const { id_aluno, id_funcionario } = agendamentoData;
+
+    const agendamento = await AgendamentoRepository.findById(id);
     if (!agendamento) {
       throw new Error('Agendamento não encontrado para atualização');
     }
-    return agendamento;
-  }
+
+    const alunoExiste = await AlunoRepository.findById(id_aluno);
+    if (!alunoExiste) {
+      throw new Error('Aluno não encontrado');
+    }
+
+    const funcionarioExiste = await FuncionarioRepository.findById(id_funcionario);
+    if (!funcionarioExiste) {
+      throw new Error('Funcionário não encontrado');
+    }
+
+    const conflito = await AgendamentoRepository.verificarConflito({
+        ...agendamentoData,
+        id_agendamento: id, 
+    });
+    if (conflito) {
+      throw new Error('O funcionário já possui um agendamento nesse horário');
+    }
+
+    return await AgendamentoRepository.update(id, agendamentoData);
+}
 
   // Deletar um agendamento por ID
   async delete(id) {

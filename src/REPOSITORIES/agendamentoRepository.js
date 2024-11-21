@@ -40,23 +40,25 @@ class AgendamentoRepository {
     return agendamento;
   }
 
-  async verificarConflito({ data, hora_inicio, hora_fim, id_funcionario }) {
-
-    hora_inicio = moment.tz(hora_inicio, 'America/Sao_Paulo').toISOString();
-    hora_fim = moment.tz(hora_fim, 'America/Sao_Paulo').toISOString();
-    const conflito = await Agendamento.findOne({
-      where: {
-        id_funcionario,
-        data,
-        [Op.or]: [
-          {
-            hora_inicio: { [Op.lt]: hora_fim },
-            hora_fim: { [Op.gt]: hora_inicio },
+  async verificarConflito({ data, hora_inicio, hora_fim, id_funcionario, id_agendamento }) {
+      hora_inicio = moment.tz(hora_inicio, 'America/Sao_Paulo').toISOString();
+      hora_fim = moment.tz(hora_fim, 'America/Sao_Paulo').toISOString();
+      
+      const conflito = await Agendamento.findOne({
+          where: {
+              id_funcionario,
+              data,
+              [Op.or]: [
+                  {
+                      hora_inicio: { [Op.lt]: hora_fim },
+                      hora_fim: { [Op.gt]: hora_inicio },
+                  },
+              ],
+              [Op.and]: id_agendamento ? { id: { [Op.ne]: id_agendamento } } : {},
           },
-        ],
-      },
-    });
-    return conflito;
+      });
+
+      return conflito;
   }
 }
 
